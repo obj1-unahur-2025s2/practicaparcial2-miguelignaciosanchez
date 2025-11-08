@@ -1,0 +1,124 @@
+import personajesYRoles.*
+import localidadesYEjercito.*
+
+describe "Tests - Parte 1" {
+  // TESTS DE PERSONAJES Y ROLES (5 tests)
+  test "Orco guerrero tiene 10% más de potencial ofensivo por brutalidad" {
+    const orcoGuerrero = new Orco(
+      rol = guerrero,
+      fuerza = 50,
+      inteligencia = 30
+    )
+    assert.equals(660, orcoGuerrero.potencialOfensivo())
+  }
+  
+  test "Humano brujo con inteligencia mayor a 50 es groso por ser inteligente" {
+    const humanoBrujo = new Humano(rol = brujo, fuerza = 20, inteligencia = 60)
+    assert.that(humanoBrujo.esInteligente())
+    assert.that(humanoBrujo.esGroso())
+  }
+  
+  test "Cazador con mascota longeva y con garras es groso y tiene buen potencial ofensivo" {
+    const mascota = new Mascota(edad = 15, fuerza = 40, tieneGarras = true)
+    cazador.cambiarMascota(mascota)
+    const humano = new Humano(rol = cazador, fuerza = 30, inteligencia = 40)
+    assert.equals(380, humano.potencialOfensivo())
+    assert.that(humano.esGroso()) 
+  }
+  
+  test "Orco nunca es inteligente aunque tenga mucha inteligencia" {
+    const orcoInteligente = new Orco(
+      rol = brujo,
+      fuerza = 40,
+      inteligencia = 100
+    )
+    assert.notThat(orcoInteligente.esInteligente())
+  }
+  
+  test "Guerrero humano con fuerza mayor a 50 es groso en su rol" {
+    const guerreroFuerte = new Humano(
+      rol = guerrero,
+      fuerza = 60,
+      inteligencia = 30
+    )
+    assert.that(guerreroFuerte.grosoEnRol())
+    assert.that(guerreroFuerte.esGroso())
+  }
+}
+
+describe "Tests - Parte 2" {
+  // TESTS DE EJERCITOS Y LOCALIDADES (5 tests)
+  test "Ejército invasor con mayor poder ofensivo conquista una aldea" {
+    const defensor1 = new Humano(rol = guerrero, fuerza = 30, inteligencia = 40)
+    const defensor2 = new Humano(rol = guerrero, fuerza = 30, inteligencia = 40)
+    const invasor1 = new Orco(rol = guerrero, fuerza = 50, inteligencia = 20)
+    const invasor2 = new Orco(rol = guerrero, fuerza = 50, inteligencia = 20)
+    const invasor3 = new Orco(rol = guerrero, fuerza = 50, inteligencia = 20)
+    const ejercitoDefensor = new Ejercito(personajes = [defensor1, defensor2])
+    const ejercitoInvasor = new Ejercito(
+      personajes = [invasor1, invasor2, invasor3]
+    )
+    const aldea = new Aldea(
+      ejercito = ejercitoDefensor,
+      cantHabitantesActual = 2,
+      maximoHabitantes = 10
+    )
+    ejercitoInvasor.invadir(aldea)
+    assert.equals(ejercitoInvasor, aldea.ejercito())
+    assert.equals(3, aldea.cantidadHabitantesActual())
+  }
+  
+  test "Ejército invasor débil no puede conquistar una aldea" {
+    const defensor1 = new Orco(rol = guerrero, fuerza = 60, inteligencia = 20)
+    const defensor2 = new Orco(rol = guerrero, fuerza = 60, inteligencia = 20)
+    const invasor = new Humano(rol = brujo, fuerza = 20, inteligencia = 50)
+    const ejercitoDefensor = new Ejercito(personajes = [defensor1, defensor2])
+    const ejercitoInvasor = new Ejercito(personajes = [invasor])
+    const aldea = new Aldea(
+      ejercito = ejercitoDefensor,
+      cantHabitantesActual = 2,
+      maximoHabitantes = 10
+    )
+    ejercitoInvasor.invadir(aldea)
+    assert.equals(ejercitoDefensor, aldea.ejercito())
+    assert.equals(2, aldea.cantidadHabitantesActual())
+  }
+  
+  test "Ciudad tiene bonus de 300 puntos defensivos" {
+    const defensor = new Humano(rol = guerrero, fuerza = 50, inteligencia = 40)
+    const ejercitoDefensor = new Ejercito(personajes = [defensor])
+    const ciudad = new Ciudad(
+      ejercito = ejercitoDefensor,
+      cantHabitantesActual = 1
+    )
+    assert.equals(900, ciudad.poderDefensivo())
+  }
+  
+  test "Ejército muy grande se divide al conquistar aldea pequeña" {
+    const defensor = new Humano(rol = brujo, fuerza = 10, inteligencia = 30)
+    const ejercitoDefensor = new Ejercito(personajes = [defensor])
+    const invasores = []
+    15.times(
+      { i => invasores.add(
+          new Orco(rol = guerrero, fuerza = 30 + i, inteligencia = 20)
+        ) }
+    )
+    const ejercitoInvasor = new Ejercito(personajes = invasores)
+    const aldea = new Aldea(
+      ejercito = ejercitoDefensor,
+      cantHabitantesActual = 1,
+      maximoHabitantes = 5
+    )
+    ejercitoInvasor.invadir(aldea)
+    assert.equals(10, aldea.ejercito().tamaño())
+    assert.equals(10, aldea.cantidadHabitantesActual())
+    assert.equals(5, ejercitoInvasor.tamaño())
+  }
+  
+  test "Ejército calcula correctamente su poder ofensivo total" {
+    const orco1 = new Orco(rol = guerrero, fuerza = 50, inteligencia = 20)
+    const orco2 = new Orco(rol = brujo, fuerza = 30, inteligencia = 20)
+    const ejercito = new Ejercito(personajes = [orco1, orco2])
+    assert.equals(990, ejercito.poderOfensivo())
+  }
+}
